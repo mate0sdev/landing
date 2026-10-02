@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mate0s · instrucciones de montaje</title>
+  <meta name="description" content="Cómo montar un desarrollador full stack en cinco pasos. Piezas incluidas.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FFD23F'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%2316181C' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f5f5f3;
+      --ink: #16181c;
+      --soft: #4b4f57;
+      --line: #c9cbcf;
+      --mark: #ffd23f;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --font: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 18px; line-height: 1.6; }
+    body { overflow-x: clip; }
+    ::selection { background: var(--mark); }
+    a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 56px);
+      column-gap: clamp(24px, 5vw, 80px);
+    }
+    .text { grid-column: 1; min-width: 0; }
+    .figure { grid-column: 2; grid-row: 1; }
+    .figure-sticky { position: sticky; top: 0; height: 100dvh; display: grid; align-items: center; }
+    .figure svg { width: 100%; height: auto; max-height: 86dvh; overflow: visible; }
+
+    /* ---------- Portada ---------- */
+    .cover { min-height: 100dvh; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(24px, 5vh, 48px) 0 clamp(32px, 6vh, 56px); }
+    .cover-top { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; }
+    .rev { border: 2px solid var(--ink); padding: 2px 10px; border-radius: 4px; font-variant-numeric: tabular-nums; }
+    .model {
+      margin: 0;
+      font-weight: 900;
+      font-size: clamp(76px, 10vw, 156px);
+      line-height: 0.85;
+      letter-spacing: -0.045em;
+    }
+    .model .zero { background: var(--mark); border-radius: 0.08em; padding: 0 0.04em; }
+    .model small { display: block; margin-top: 18px; font-size: clamp(22px, 2.2vw, 30px); font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; }
+    .cover-foot { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { border: 2px solid var(--ink); border-radius: 999px; padding: 4px 14px; font-weight: 600; font-size: 15px; }
+    .pill.mark { background: var(--mark); }
+    .scroll-hint { font-size: 15px; color: var(--soft); margin-top: 18px; }
+
+    /* ---------- Piezas ---------- */
+    .section { padding: 56px 0; border-top: 3px solid var(--ink); }
+    .section h2 { margin: 0 0 22px; font-size: clamp(30px, 3.2vw, 44px); line-height: 1; letter-spacing: -0.03em; font-weight: 850; }
+    .parts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .parts li {
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      padding: 10px 12px 12px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2px 10px;
+      align-items: baseline;
+      background: var(--paper);
+    }
+    .parts .id { grid-row: span 2; font-weight: 900; font-size: 28px; line-height: 1; }
+    .parts .name { font-weight: 700; line-height: 1.25; }
+    .parts .qty { color: var(--soft); font-variant-numeric: tabular-nums; font-size: 15px; }
+    .parts li.extra { border-style: dashed; }
+
+    .warn { display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: center; margin-top: 22px; padding: 14px 16px; background: var(--mark); border-radius: 6px; font-weight: 600; }
+    .warn svg { width: 56px; height: 50px; }
+
+    /* ---------- Pasos ---------- */
+    .step { min-height: 78dvh; padding: 56px 0; border-top: 3px solid var(--ink); display: grid; grid-template-columns: auto 1fr; column-gap: 22px; align-content: start; }
+    .num {
+      font-weight: 900;
+      font-size: clamp(64px, 7vw, 104px);
+      line-height: 0.8;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+      padding: 0 8px 4px 0;
+      transition: background-color 260ms var(--ease);
+      align-self: start;
+      border-radius: 4px;
+    }
+    .step.is-active .num { background: var(--mark); padding-left: 8px; }
+    .step h3 { margin: 4px 0 12px; font-size: clamp(24px, 2.4vw, 32px); line-height: 1.1; letter-spacing: -0.02em; font-weight: 800; }
+    .step p { margin: 0 0 12px; max-width: 52ch; }
+    .step .uses { font-size: 15px; color: var(--soft); }
+    .step .uses b { color: var(--ink); }
+    .contact { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 10px; font-weight: 700; font-size: 20px; }
+    .contact a { min-height: 44px; display: inline-flex; align-items: center; }
+    .foot { grid-column: 1 / -1; padding: 28px 0 40px; border-top: 3px solid var(--ink); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 14px; color: var(--soft); }
+
+    /* ---------- Ilustración que se monta ---------- */
+    .piece { transition: transform 900ms var(--ease), opacity 500ms var(--ease); transform: translate(var(--dx), var(--dy)) rotate(var(--r)); transform-box: fill-box; transform-origin: center; opacity: 0.28; }
+    .piece .fill { fill: var(--paper); }
+    .piece.on { transform: none; opacity: 1; }
+    .piece.now .fill { fill: var(--mark); transition: fill 400ms var(--ease); }
+    .stroke { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .callout { transition: opacity 400ms var(--ease); }
+    .piece.on .callout { opacity: 0; }
+    .callout circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+    .callout text { font: 800 15px var(--font); fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+    .floor { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 2 7; stroke-linecap: round; }
+    .bubble-text { font: 800 20px var(--font); fill: var(--ink); }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+      .figure { grid-column: 1; grid-row: 1; position: sticky; top: 0; z-index: 2; background: var(--paper); border-bottom: 3px solid var(--ink); }
+      .figure-sticky { position: static; height: auto; padding: 8px 0; }
+      .figure svg { max-height: 34dvh; }
+      .text { grid-row: 2; }
+      .cover { min-height: auto; gap: 28px; padding-top: 24px; }
+      .step { min-height: 70dvh; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 1ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="figure" aria-hidden="true">
+      <div class="figure-sticky">
+        <svg viewBox="0 0 420 420" role="presentation">
+          <line class="floor" x1="20" y1="382" x2="400" y2="382" />
+
+          <!-- 1 · Mesa -->
+          <g class="piece" data-piece="1" style="--dx: 30px; --dy: -70px; --r: -9deg">
+            <rect class="stroke fill" x="120" y="232" width="250" height="14" rx="3" />
+            <rect class="stroke fill" x="134" y="246" width="12" height="136" rx="2" />
+            <rect class="stroke fill" x="344" y="246" width="12" height="136" rx="2" />
+            <g class="callout"><circle cx="245" cy="206" r="15" /><text x="245" y="207">1</text></g>
+          </g>
+
+          <!-- 2 · Silla y persona -->
+          <g class="piece" data-piece="2" style="--dx: -60px; --dy: 30px; --r: 6deg">
+            <rect class="stroke fill" x="44" y="283" width="72" height="11" rx="3" />
+            <rect class="stroke fill" x="44" y="205" width="10" height="89" rx="3" />
+            <line class="stroke" x1="80" y1="294" x2="80" y2="370" />
+            <line class="stroke" x1="56" y1="378" x2="104" y2="378" />
+            <circle class="stroke fill" cx="92" cy="156" r="19" />
+            <path class="stroke fill" d="M72 196 C 74 182, 110 180, 114 196 L 118 282 L 70 282 Z" />
+            <path class="stroke" d="M112 206 L 150 232 L 196 226" />
+            <path class="stroke" d="M112 282 L 170 288 L 172 378 L 188 378" />
+            <g class="callout"><circle cx="30" cy="160" r="15" /><text x="30" y="161">2</text></g>
+          </g>
+
+          <!-- 3 · Portátil -->
+          <g class="piece" data-piece="3" style="--dx: 70px; --dy: -110px; --r: 14deg">
+            <rect class="stroke fill" x="186" y="222" width="104" height="10" rx="3" />
+            <path class="stroke fill" d="M270 222 L 292 148 L 304 151 L 284 222 Z" />
+            <g class="callout"><circle cx="330" cy="140" r="15" /><text x="330" y="141">3</text></g>
+          </g>
+
+          <!-- 4 · Lámpara y taza -->
+          <g class="piece" data-piece="4" style="--dx: 60px; --dy: -40px; --r: -12deg">
+            <path class="stroke" d="M352 232 L 366 150 L 330 118" />
+            <path class="stroke fill" d="M314 104 L 346 118 L 330 142 L 300 128 Z" />
+            <rect class="stroke fill" x="310" y="204" width="22" height="28" rx="4" />
+            <path class="stroke" d="M332 211 C 342 211, 342 225, 332 225" />
+            <path class="stroke" d="M316 196 C 312 190, 322 186, 318 180 M 326 196 C 322 190, 332 186, 328 180" />
+            <g class="callout"><circle cx="392" cy="96" r="15" /><text x="392" y="97">4</text></g>
+          </g>
+
+          <!-- 5 · Bocadillo -->
+          <g class="piece" data-piece="5" style="--dx: -20px; --dy: -50px; --r: 0deg">
+            <path class="stroke fill" d="M112 64 H 236 A 10 10 0 0 1 246 74 V 110 A 10 10 0 0 1 236 120 H 140 L 118 138 L 124 120 H 112 A 10 10 0 0 1 102 110 V 74 A 10 10 0 0 1 112 64 Z" />
+            <text class="bubble-text" x="124" y="99">¡Hablemos!</text>
+            <g class="callout"><circle cx="266" cy="60" r="15" /><text x="266" y="61">5</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="text">
+      <header class="cover">
+        <div class="cover-top"><span>mate0s</span><span class="rev">Rev. 2026</span></div>
+        <div>
+          <h1 class="model">mate<span class="zero">0</span>s<small>Desarrollador full stack.<br>Instrucciones de montaje.</small></h1>
+          <p class="scroll-hint">Sigue los pasos: el dibujo se va montando a medida que bajas.</p>
+        </div>
+        <div class="cover-foot">
+          <span class="pill mark">1 persona</span>
+          <span class="pill">Tiempo de montaje: depende del café</span>
+        </div>
+      </header>
+
+      <section class="section" aria-labelledby="piezas">
+        <h2 id="piezas">Piezas incluidas</h2>
+        <ul class="parts" data-parts></ul>
+        <div class="warn">
+          <svg viewBox="0 0 56 50" aria-hidden="true"><path d="M28 4 L 53 46 H 3 Z" fill="none" stroke="#16181c" stroke-width="4" stroke-linejoin="round" /><rect x="25.5" y="17" width="5" height="16" rx="2" fill="#16181c" /><circle cx="28" cy="39" r="3" fill="#16181c" /></svg>
+          <span>No montar sin control de versiones. Ninguna pieza se ha dañado durante las pruebas.</span>
+        </div>
+      </section>
+
+      <section class="step" data-step="1">
+        <span class="num" aria-hidden="true">1</span>
+        <div>
+          <h3>La base: formación</h3>
+          <p>Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM). Escritorio, móvil y web: la mesa sobre la que se apoya todo lo demás.</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="2">
+        <span class="num" aria-hidden="true">2</span>
+        <div>
+          <h3>Sentarse a trabajar</h3>
+          <p>Full stack en Kometasoft: plataformas web de principio a fin, de la plantilla a la base de datos. Entre otros proyectos, he participado en SNP Galaxy.</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="3">
+        <span class="num" aria-hidden="true">3</span>
+        <div>
+          <h3>Encajar el stack</h3>
+          <p>Las piezas A a G de la lista, en el orden en que viaja una petición: la plantilla pinta, JavaScript pide, PHP resuelve y MySQL guarda.</p>
+          <p class="uses">Usa las piezas <b>A B C D E F G</b>.</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="4">
+        <span class="num" aria-hidden="true">4</span>
+        <div>
+          <h3>Ajustes finos</h3>
+          <p>Me interesan la depuración y la seguridad web: encontrar el porqué de un fallo, no solo dónde está, y que lo que funciona, además, aguante.</p>
+          <p class="uses">Usa la pieza <b>H</b>. Mucha.</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="5">
+        <span class="num" aria-hidden="true">5</span>
+        <div>
+          <h3>¿Falta alguna pieza?</h3>
+          <p>Si necesitas a alguien que monte, desmonte o arregle, escríbeme.</p>
+          <div class="contact" data-contact></div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="foot"><span>mate0s · Instrucciones de montaje</span><span>Consérvese para futuras consultas.</span></footer>
+  </div>
+
+  <script>
+    /* Edita aquí tus piezas y tus datos de contacto. */
+    const PIEZAS = [
+      ["A", "PHP", "×1"],
+      ["B", "JavaScript", "×1"],
+      ["C", "HTML y CSS", "×1"],
+      ["D", "Smarty (.tpl)", "×1"],
+      ["E", "jQuery y AJAX", "×1"],
+      ["F", "Doctrine", "×1"],
+      ["G", "MySQL", "×1"],
+      ["H", "Café", "×∞", true],
+    ];
+    const CONTACTO = { github: "https://github.com/mate0sdev", email: "", linkedin: "" };
+
+    document.querySelector("[data-parts]").innerHTML = PIEZAS.map(
+      ([id, name, qty, extra]) => `<li${extra ? ' class="extra"' : ""}><span class="id">${id}</span><span class="name">${name}</span><span class="qty">${qty}</span></li>`,
+    ).join("");
+
+    const links = [];
+    if (CONTACTO.email) links.push(`<a href="mailto:${CONTACTO.email}">${CONTACTO.email}</a>`);
+    if (CONTACTO.linkedin) links.push(`<a href="${CONTACTO.linkedin}" target="_blank" rel="noopener">LinkedIn</a>`);
+    links.push(`<a href="${CONTACTO.github}" target="_blank" rel="noopener">GitHub · mate0sdev</a>`);
+    document.querySelector("[data-contact]").innerHTML = links.join("");
+
+    /* Cada paso visible monta su pieza (y las anteriores). */
+    const pieces = [...document.querySelectorAll("[data-piece]")];
+    const steps = [...document.querySelectorAll("[data-step]")];
+    function setStep(n) {
+      pieces.forEach((p) => {
+        const i = Number(p.dataset.piece);
+        p.classList.toggle("on", i <= n);
+        p.classList.toggle("now", i === n);
+      });
+      steps.forEach((s) => s.classList.toggle("is-active", Number(s.dataset.step) === n));
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length) setStep(Number(visible[visible.length - 1].target.dataset.step));
+        else if (window.scrollY < steps[0].offsetTop - innerHeight * 0.5) setStep(0);
+      },
+      { rootMargin: "-45% 0px -45% 0px" },
+    );
+    steps.forEach((s) => io.observe(s));
+    setStep(0);
+  </script>
+</body>
+</html>

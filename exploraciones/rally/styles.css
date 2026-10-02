@@ -1,0 +1,593 @@
+/* Restricción de diseño: dos colores. Todo lo demás son opacidades de la tinta. */
+:root {
+  --ink: #1b3bff;
+  --paper: #f5f7ff;
+  --ink-rgb: 27 59 255;
+  --ink-soft: rgb(var(--ink-rgb) / 0.86);
+  --ink-12: rgb(var(--ink-rgb) / 0.12);
+  --ink-06: rgb(var(--ink-rgb) / 0.06);
+
+  --display: "Anybody", "Arial Narrow", sans-serif;
+  --text: "Hanken Grotesk", system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --gutter: clamp(16px, 3vw, 48px);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Estructura: una pantalla ---------- */
+
+.page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "court info";
+  gap: clamp(24px, 4vw, 72px);
+  padding: var(--gutter);
+}
+
+.court-col {
+  grid-area: court;
+  height: calc(100dvh - 2 * var(--gutter));
+  position: sticky;
+  top: var(--gutter);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: stretch;
+}
+
+.info-col {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 760px;
+}
+
+/* ---------- Cabecera ---------- */
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 850;
+  font-stretch: 140%;
+  font-variation-settings: "wdth" 140;
+  font-size: clamp(64px, 8.2vw, 136px);
+  line-height: 0.82;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: baseline;
+}
+
+.zero {
+  display: inline-block;
+  transition: color 400ms var(--ease-out), opacity 400ms var(--ease-out);
+}
+
+/* Cuando la bola está en juego, el 0 se queda hueco */
+.zero.is-out {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--ink);
+  opacity: 0.35;
+}
+
+.tagline {
+  margin: clamp(18px, 2.4vh, 28px) 0 4px;
+  font-size: clamp(19px, 1.6vw, 23px);
+  font-weight: 600;
+  line-height: 1.35;
+  max-width: 40ch;
+}
+
+.pitch {
+  margin: 0;
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+
+.btn-link {
+  display: block;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 2px 0 0;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  color: var(--ink);
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.btn {
+  border-radius: 999px;
+  padding: 10px 18px;
+  min-height: 44px;
+  font-weight: 600;
+  line-height: 1;
+  transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out), color 160ms var(--ease-out);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  font-family: var(--display);
+  font-stretch: 120%;
+  font-variation-settings: "wdth" 120;
+  letter-spacing: 0.02em;
+}
+
+.btn-ghost:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-solid {
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  padding: 16px 30px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 130%;
+  font-variation-settings: "wdth" 130;
+  font-size: 20px;
+}
+
+.btn-solid:hover {
+  transform: translateY(-1px);
+}
+
+.announce {
+  margin: 12px 0 0;
+  min-height: 1.6em;
+  font-weight: 600;
+}
+
+/* ---------- Capítulos: 15 / 30 / 40 / Juego ---------- */
+
+.chapters {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  border-top: 1.5px solid var(--ink);
+  outline: none;
+}
+
+.chapter {
+  --score-col: clamp(124px, 10vw, 144px);
+  display: grid;
+  grid-template-columns: var(--score-col) minmax(0, 1fr);
+  gap: 4px 16px;
+  padding: 14px 0 16px;
+  border-bottom: 1px solid var(--ink-12);
+}
+
+.ch-score {
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 130%;
+  font-variation-settings: "wdth" 130;
+  font-size: clamp(24px, 2.2vw, 30px);
+  line-height: 1;
+  padding-top: 2px;
+  transform-origin: left center;
+}
+
+.ch-heading {
+  grid-column: 1 / -1;
+  margin: 0;
+  font: inherit;
+}
+
+.ch-head {
+  display: grid;
+  grid-template-columns: var(--score-col) minmax(0, 1fr) auto;
+  column-gap: 16px;
+  align-items: baseline;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  min-height: 44px;
+}
+
+.ch-head:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.ch-toggle {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  align-self: center;
+  transition: transform 220ms var(--ease-out);
+}
+
+.ch-toggle::before,
+.ch-toggle::after {
+  content: "";
+  position: absolute;
+  inset: 6px 0;
+  background: var(--ink);
+  border-radius: 1px;
+}
+
+.ch-toggle::after {
+  transform: rotate(90deg);
+}
+
+.chapter.is-open .ch-toggle {
+  transform: rotate(45deg);
+}
+
+.chapter.is-locked .ch-toggle,
+.chapter:not(.is-open) .ch-body {
+  display: none;
+}
+
+.ch-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-stretch: 110%;
+  font-variation-settings: "wdth" 110;
+  font-size: clamp(20px, 1.7vw, 24px);
+  line-height: 1.15;
+}
+
+.ch-body {
+  grid-column: 2;
+}
+
+.ch-body p {
+  margin: 6px 0 0;
+  max-width: 60ch;
+}
+
+.ch-lock {
+  grid-column: 2;
+  margin: 2px 0 0;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.chapter.is-locked .ch-score,
+.chapter.is-locked .ch-title {
+  opacity: 0.32;
+}
+
+.chapter.is-locked .ch-body {
+  display: none;
+}
+
+.chapter:not(.is-locked) .ch-lock {
+  display: none;
+}
+
+/* El único momento orquestado: el marcador "sella" el capítulo */
+.chapter.just-unlocked .ch-score {
+  animation: stamp 520ms var(--ease-out) both;
+}
+
+.chapter.just-unlocked .ch-body {
+  animation: rise 520ms 120ms var(--ease-out) both;
+}
+
+@keyframes stamp {
+  0% {
+    transform: scale(1.9) rotate(-6deg);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stack li {
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 600;
+}
+
+.contact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.foot {
+  margin-top: auto;
+  padding-top: 24px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* ---------- Pista ---------- */
+
+.court-wrap {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 1 / 2;
+  max-width: calc(100vw - 2 * var(--gutter));
+  justify-self: center;
+}
+
+#court {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: none;
+  border-radius: 6px;
+}
+
+#court:focus-visible {
+  outline-offset: 4px;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--display);
+  line-height: 1;
+  padding: 0 2px 12px;
+}
+
+.sb-name {
+  font-weight: 600;
+  font-stretch: 110%;
+  font-variation-settings: "wdth" 110;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 13px;
+}
+
+.sb-num {
+  font-weight: 850;
+  font-stretch: 140%;
+  font-variation-settings: "wdth" 140;
+  font-size: 30px;
+  display: inline-block;
+  transform-origin: center;
+}
+
+.sb-sep {
+  flex: 1;
+  height: 1.5px;
+  background: var(--ink);
+  align-self: center;
+  opacity: 0.35;
+}
+
+.sb-num.bump {
+  animation: bump 380ms var(--ease-out);
+}
+
+@keyframes bump {
+  from {
+    transform: scaleX(1.6);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.serve {
+  position: absolute;
+  inset: auto 0 21%;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  text-align: center;
+  z-index: 2;
+  transition: opacity 240ms var(--ease-out), transform 240ms var(--ease-out);
+}
+
+.serve.is-hidden {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.serve-hint {
+  margin: 0;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.4;
+  max-width: 26ch;
+  background: var(--paper);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Bola que sale del logo y viaja a la pista */
+.ball-fly {
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  pointer-events: none;
+  z-index: 10;
+  will-change: transform;
+}
+
+/* ---------- Móvil ---------- */
+
+@media (max-width: 860px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "info" "court";
+    gap: 20px;
+  }
+
+  .info-col {
+    display: contents;
+  }
+
+  .top,
+  .tagline,
+  .pitch,
+  .announce {
+    order: 0;
+  }
+
+  .top {
+    grid-row: 1;
+  }
+
+  .tagline {
+    grid-row: 2;
+    margin-top: 0;
+  }
+
+  .pitch {
+    grid-row: 3;
+  }
+
+  .announce {
+    grid-row: 4;
+    margin-top: 0;
+  }
+
+  .court-col {
+    grid-row: 5;
+    position: relative;
+    top: 0;
+    height: min(62dvh, 560px);
+    justify-self: center;
+  }
+
+  .chapters {
+    grid-row: 6;
+  }
+
+  .foot {
+    grid-row: 7;
+  }
+
+  .wordmark {
+    font-size: clamp(40px, 12.5vw, 96px);
+  }
+
+  .top {
+    align-items: center;
+  }
+
+  .chapter {
+    --score-col: 88px;
+    column-gap: 12px;
+  }
+
+  .ch-head {
+    column-gap: 12px;
+  }
+
+  .ch-score {
+    font-size: 18px;
+  }
+
+  .tagline {
+    font-size: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

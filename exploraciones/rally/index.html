@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mate0s · desarrollador full stack</title>
+  <meta name="description" content="mate0s, desarrollador full stack. Gánale puntos al bug y te cuento el resto.">
+  <meta name="theme-color" content="#F5F7FF">
+  <meta property="og:title" content="mate0s · desarrollador full stack">
+  <meta property="og:description" content="Una landing que se juega: gánale puntos al bug para desbloquear quién soy.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <section class="info-col">
+      <header class="top">
+        <h1 class="wordmark" aria-label="mate0s">
+          <span aria-hidden="true">mate</span><span class="zero" aria-hidden="true" data-zero>0</span><span aria-hidden="true">s</span>
+        </h1>
+        <div class="top-actions">
+          <button class="btn btn-ghost" type="button" data-action="lang" aria-label="Cambiar idioma / Change language">EN</button>
+        </div>
+      </header>
+
+      <p class="tagline" data-t="tagline"></p>
+      <p class="pitch">
+        <span data-t="pitch"></span>
+        <button class="btn-link" type="button" data-action="skip"></button>
+      </p>
+
+      <p class="announce" role="status" aria-live="polite" data-announce></p>
+
+      <ol class="chapters" id="chapters" tabindex="-1" data-chapters></ol>
+
+      <footer class="foot" data-t="footer"></footer>
+    </section>
+    <section class="court-col">
+      <div class="scoreboard" id="scoreboard" aria-hidden="true">
+        <span class="sb-name" data-t="you"></span><b class="sb-num" data-score="you">0</b>
+        <span class="sb-sep"></span>
+        <b class="sb-num" data-score="bug">0</b><span class="sb-name" data-t="bug"></span>
+      </div>
+      <div class="court-wrap">
+        <canvas id="court" role="img"></canvas>
+        <div class="serve" data-serve>
+          <button class="btn btn-solid" type="button" data-action="serve"></button>
+          <p class="serve-hint" data-t="serveHint"></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

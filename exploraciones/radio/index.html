@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mate0s FM</title>
+  <meta name="description" content="mate0s, desarrollador full stack. Gira la rueda y sintoniza cada emisora.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23E8572A'/%3E%3Crect x='5' y='9' width='22' height='14' rx='3' fill='%23ECEAE4'/%3E%3Ccircle cx='21' cy='16' r='4' fill='%2327282B'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --wall: #e8572a;
+      --wall-ink: #1c1510;
+      --body: #eceae4;
+      --body-edge: #d6d3cb;
+      --graphite: #27282b;
+      --scale: #e9e6dd;
+      --needle: #ff6a2b;
+      --muted: #6a6b70;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --font: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--wall); color: var(--wall-ink); font-family: var(--font); font-size: 17px; line-height: 1.55; }
+    body { overflow-x: clip; }
+    a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    :focus-visible { outline: 3px solid var(--graphite); outline-offset: 3px; }
+
+    .page { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; gap: 24px; padding: clamp(16px, 3vw, 40px) clamp(16px, 4vw, 56px); max-width: 1180px; margin: 0 auto; }
+    .top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+    .top h1 { margin: 0; font-size: clamp(28px, 3vw, 40px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+    .top p { margin: 0; font-size: 15px; max-width: 42ch; }
+    .stage { display: grid; align-content: center; gap: 22px; }
+
+    /* ---------- Radio ---------- */
+    .radio {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
+      gap: clamp(20px, 3vw, 40px);
+      padding: clamp(18px, 3vw, 36px);
+      background: var(--body);
+      border-radius: 26px;
+      box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.7), inset 0 -3px 0 var(--body-edge), 0 30px 60px -30px rgb(80 20 0 / 0.55), 0 8px 18px -10px rgb(80 20 0 / 0.35);
+      color: var(--graphite);
+    }
+    .grille {
+      border-radius: 14px;
+      background: radial-gradient(circle, var(--graphite) 36%, transparent 39%) 50% 50% / 20px 20px;
+      min-height: 260px;
+      position: relative;
+    }
+    .grille::after { content: "mate0s"; position: absolute; left: 50%; bottom: -2px; transform: translate(-50%, 50%); background: var(--body); padding: 0 10px; font-weight: 700; font-size: 14px; letter-spacing: 0.06em; }
+
+    .panel { display: grid; gap: 16px; min-width: 0; }
+    .dial {
+      position: relative;
+      height: 104px;
+      border-radius: 10px;
+      background: var(--graphite);
+      color: var(--scale);
+      overflow: hidden;
+      cursor: ew-resize;
+      touch-action: none;
+    }
+    .ticks { position: absolute; left: 4%; right: 4%; bottom: 30px; height: 22px; background: repeating-linear-gradient(90deg, rgb(233 230 221 / 0.7) 0 1px, transparent 1px 2%); }
+    .ticks::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--scale) 0 2px, transparent 2px 20%); height: 34px; bottom: 0; top: auto; }
+    .nums { position: absolute; left: 4%; right: 4%; bottom: 6px; height: 18px; font-size: 12px; font-variant-numeric: tabular-nums; }
+    .nums span { position: absolute; transform: translateX(-50%); }
+    .marks { position: absolute; left: 4%; right: 4%; top: 8px; height: 30px; }
+    .mark {
+      position: absolute;
+      transform: translateX(-50%);
+      background: none;
+      border: 0;
+      color: var(--scale);
+      font: 600 11px var(--font);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 4px 4px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 30px;
+      opacity: 0.7;
+    }
+    .mark::after { content: ""; position: absolute; left: 50%; bottom: 2px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--needle); }
+    .mark.on { opacity: 1; }
+    .needle { position: absolute; top: 0; bottom: 0; left: 0; width: 3px; margin-left: -1.5px; background: var(--needle); box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25); will-change: transform; }
+
+    .readout { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: end; }
+    .freq { font-size: clamp(44px, 5.6vw, 76px); font-weight: 700; letter-spacing: -0.03em; line-height: 0.9; font-variant-numeric: tabular-nums; }
+    .freq small { font-size: 0.32em; letter-spacing: 0; margin-left: 6px; font-weight: 600; }
+    .station { margin: 6px 0 0; font-weight: 700; font-size: 18px; min-height: 1.5em; }
+    .signal { display: flex; gap: 4px; align-items: end; height: 30px; }
+    .signal i { width: 7px; border-radius: 2px; background: var(--body-edge); transition: background-color 120ms linear; }
+    .signal i:nth-child(1) { height: 30%; } .signal i:nth-child(2) { height: 50%; } .signal i:nth-child(3) { height: 70%; } .signal i:nth-child(4) { height: 85%; } .signal i:nth-child(5) { height: 100%; }
+    .signal i.on { background: var(--needle); }
+
+    .controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; }
+    .screen { min-height: 150px; padding: 14px 16px; border-radius: 10px; background: #f6f5f1; box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.14); font-size: 16px; line-height: 1.55; }
+    .screen p { margin: 0 0 8px; max-width: 56ch; }
+    .screen .static { color: var(--muted); letter-spacing: 0.02em; word-break: break-all; }
+    .screen ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; font-weight: 700; }
+    .screen .links { display: flex; flex-wrap: wrap; gap: 4px 18px; font-weight: 700; }
+    .screen .links a { min-height: 44px; display: inline-flex; align-items: center; }
+
+    .knob-wrap { display: grid; justify-items: center; gap: 12px; }
+    .knob {
+      width: clamp(104px, 11vw, 132px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 0;
+      background:
+        radial-gradient(circle at 50% 50%, var(--body) 0 54%, transparent 55%),
+        repeating-conic-gradient(var(--graphite) 0 5deg, #3a3b3f 5deg 10deg);
+      box-shadow: 0 10px 18px -8px rgb(0 0 0 / 0.5), inset 0 0 0 3px var(--graphite);
+      position: relative;
+      cursor: grab;
+      touch-action: none;
+      will-change: transform;
+    }
+    .knob::after { content: ""; position: absolute; left: 50%; top: 22%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--needle); }
+    .knob:active { cursor: grabbing; }
+    .sound { display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; font: 600 14px var(--font); color: var(--graphite); cursor: pointer; min-height: 44px; }
+    .sound .led { width: 10px; height: 10px; border-radius: 50%; background: var(--body-edge); box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.2); }
+    .sound[aria-pressed="true"] .led { background: var(--needle); }
+
+    .guide { display: flex; flex-wrap: wrap; gap: 8px 10px; justify-content: center; list-style: none; margin: 0; padding: 0; }
+    .guide button { font: 600 14px var(--font); color: var(--wall-ink); background: transparent; border: 1.5px solid var(--wall-ink); border-radius: 999px; padding: 6px 12px; min-height: 40px; cursor: pointer; font-variant-numeric: tabular-nums; }
+    .guide button[aria-current="true"] { background: var(--wall-ink); color: var(--wall); }
+    .foot { font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+    @media (max-width: 860px) {
+      .radio { grid-template-columns: minmax(0, 1fr); }
+      .grille { min-height: 110px; }
+      .controls { grid-template-columns: minmax(0, 1fr); }
+      .knob-wrap { grid-template-columns: auto auto; justify-content: space-between; align-items: center; }
+      .mark { font-size: 0; padding: 4px 8px 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 1ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <h1>mate0s FM</h1>
+      <p>Desarrollador full stack. Gira la rueda o arrastra el dial para sintonizar cada emisora.</p>
+    </header>
+
+    <main class="stage">
+      <div class="radio">
+        <div class="grille" aria-hidden="true"></div>
+        <div class="panel">
+          <div class="dial" data-dial aria-hidden="true">
+            <div class="marks" data-marks></div>
+            <div class="ticks"></div>
+            <div class="nums" data-nums></div>
+            <div class="needle" data-needle></div>
+          </div>
+
+          <div class="readout">
+            <div>
+              <div class="freq" aria-hidden="true"><span data-freq>88.0</span><small>MHz</small></div>
+              <p class="station" data-station></p>
+            </div>
+            <div class="signal" aria-hidden="true" data-signal><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+
+          <div class="controls">
+            <div class="screen" data-screen aria-live="polite"></div>
+            <div class="knob-wrap">
+              <button class="knob" type="button" role="slider" aria-label="Sintonía" aria-valuemin="88" aria-valuemax="108" data-knob></button>
+              <button class="sound" type="button" aria-pressed="false" data-sound><span class="led"></span>Sonido</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav aria-label="Emisoras"><ul class="guide" data-guide></ul></nav>
+    </main>
+
+    <footer class="foot"><span>Sin anuncios. Solo código.</span><span>github.com/mate0sdev</span></footer>
+  </div>
+
+  <script>
+    /* Edita aquí las emisoras y tus datos de contacto. */
+    const CONTACTO = { github: "https://github.com/mate0sdev", email: "", linkedin: "" };
+    const EMISORAS = [
+      { f: 88.4, name: "mate0s FM", short: "Inicio", body: ["Desarrollador full stack.", "Estás escuchando mate0s FM. Gira la rueda para cambiar de emisora: en cada una te cuento una parte de lo que hago."] },
+      { f: 92.6, name: "Formación", short: "DAM", body: ["Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM): escritorio, móvil y web."] },
+      { f: 96.8, name: "Experiencia", short: "Trabajo", body: ["Full stack en Kometasoft: plataformas web de principio a fin, de la plantilla a la base de datos.", "Entre otros proyectos, he participado en SNP Galaxy."] },
+      { f: 100.9, name: "Stack", short: "Stack", list: ["PHP", "JavaScript", "HTML y CSS", "Smarty", "jQuery y AJAX", "Doctrine", "MySQL"] },
+      { f: 104.3, name: "Intereses", short: "Intereses", body: ["Depuración y seguridad web: encontrar el porqué de un fallo, no solo dónde está, y que lo que funciona, además, aguante."] },
+      { f: 107.2, name: "Contacto", short: "Contacto", contact: true, body: ["Estás en antena. ¿Un proyecto, una oferta o una charla?"] },
+    ];
+    const MIN = 88, MAX = 108, LOCK = 0.9;
+
+    const $ = (s) => document.querySelector(s);
+    const dial = $("[data-dial]"), needle = $("[data-needle]"), knob = $("[data-knob]");
+    const screen = $("[data-screen]"), freqEl = $("[data-freq]"), stationEl = $("[data-station]");
+    const bars = [...document.querySelectorAll("[data-signal] i")];
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    const pct = (f) => 4 + ((f - MIN) / (MAX - MIN)) * 92;
+
+    // Escala
+    $("[data-nums]").innerHTML = [88, 92, 96, 100, 104, 108].map((n) => `<span style="left:${((n - MIN) / (MAX - MIN)) * 100}%">${n}</span>`).join("");
+    $("[data-marks]").innerHTML = EMISORAS.map((e, i) => `<button class="mark" type="button" tabindex="-1" data-go="${i}" style="left:${((e.f - MIN) / (MAX - MIN)) * 100}%">${e.short}</button>`).join("");
+    $("[data-guide]").innerHTML = EMISORAS.map((e, i) => `<li><button type="button" data-go="${i}">${e.f.toFixed(1)} · ${e.name}</button></li>`).join("");
+
+    function stationHtml(e) {
+      let html = (e.body || []).map((p) => `<p>${p}</p>`).join("");
+      if (e.list) html += `<ul>${e.list.map((x) => `<li>${x}</li>`).join("")}</ul>`;
+      if (e.contact) {
+        const l = [];
+        if (CONTACTO.email) l.push(`<a href="mailto:${CONTACTO.email}">${CONTACTO.email}</a>`);
+        if (CONTACTO.linkedin) l.push(`<a href="${CONTACTO.linkedin}" target="_blank" rel="noopener">LinkedIn</a>`);
+        l.push(`<a href="${CONTACTO.github}" target="_blank" rel="noopener">GitHub · mate0sdev</a>`);
+        html += `<p class="links">${l.join("")}</p>`;
+      }
+      return html;
+    }
+
+    // Estática: el texto de la emisora más cercana, roto según la señal
+    const NOISE = "#%&*+=/\\|~^:;.,";
+    function scramble(text, signal) {
+      const keep = Math.max(0, signal);
+      return [...text].map((ch) => (ch === " " || Math.random() < keep ? ch : NOISE[(Math.random() * NOISE.length) | 0])).join("");
+    }
+
+    let freq = EMISORAS[0].f;
+    let locked = -1;
+    let nearest = 0;
+    let signal = 1;
+
+    function render() {
+      freqEl.textContent = freq.toFixed(1);
+      needle.style.transform = `translateX(${(pct(freq) / 100) * dial.clientWidth}px)`;
+      knob.style.transform = `rotate(${((freq - MIN) / (MAX - MIN)) * 300 - 150}deg)`;
+      knob.setAttribute("aria-valuenow", freq.toFixed(1));
+
+      nearest = EMISORAS.reduce((best, e, i) => (Math.abs(e.f - freq) < Math.abs(EMISORAS[best].f - freq) ? i : best), 0);
+      const d = Math.abs(EMISORAS[nearest].f - freq);
+      signal = Math.max(0, 1 - d / LOCK);
+      bars.forEach((b, i) => b.classList.toggle("on", signal > i / 5 + 0.05));
+      document.querySelectorAll(".mark").forEach((m, i) => m.classList.toggle("on", i === nearest && signal > 0.6));
+      document.querySelectorAll(".guide button").forEach((b, i) => b.setAttribute("aria-current", String(i === nearest && signal > 0.85)));
+
+      const e = EMISORAS[nearest];
+      knob.setAttribute("aria-valuetext", signal > 0.85 ? `${freq.toFixed(1)} MHz, ${e.name}` : `${freq.toFixed(1)} MHz, sin señal`);
+      if (signal > 0.85) {
+        stationEl.textContent = e.name;
+        if (locked !== nearest) {
+          locked = nearest;
+          screen.innerHTML = stationHtml(e);
+        }
+      } else {
+        locked = -1;
+        stationEl.textContent = signal > 0.2 ? "buscando señal…" : "estática";
+        const text = (e.body || []).join(" ") + (e.list ? " " + e.list.join(" · ") : "");
+        screen.innerHTML = `<p class="static" aria-hidden="true">${scramble(text, reduce.matches ? 0.6 : signal * signal)}</p>`;
+      }
+      updateNoise();
+    }
+
+    function setFreq(f) {
+      freq = Math.round(Math.max(MIN, Math.min(MAX, f)) * 10) / 10;
+      render();
+    }
+
+    // Sintonía fina: al soltar cerca de una emisora, se engancha sola
+    let snapTimer;
+    function settle() {
+      const e = EMISORAS[nearest];
+      if (Math.abs(e.f - freq) > LOCK * 0.75 || Math.abs(e.f - freq) < 0.05) return;
+      if (reduce.matches) return setFreq(e.f);
+      clearInterval(snapTimer);
+      snapTimer = setInterval(() => {
+        const step = Math.sign(e.f - freq) * 0.1;
+        if (Math.abs(e.f - freq) < 0.06) { clearInterval(snapTimer); return setFreq(e.f); }
+        setFreq(freq + step);
+      }, 34);
+    }
+
+    function goStation(i) {
+      clearInterval(snapTimer);
+      const target = EMISORAS[i].f;
+      if (reduce.matches) return setFreq(target);
+      snapTimer = setInterval(() => {
+        const diff = target - freq;
+        if (Math.abs(diff) < 0.06) { clearInterval(snapTimer); return setFreq(target); }
+        setFreq(freq + Math.sign(diff) * Math.max(0.1, Math.min(0.8, Math.abs(diff) / 5)));
+      }, 24);
+    }
+    document.addEventListener("click", (ev) => {
+      const b = ev.target.closest("[data-go]");
+      if (b) goStation(Number(b.dataset.go));
+    });
+
+    // Rueda: arrastre circular
+    let knobDrag = null;
+    const angleOf = (ev) => {
+      const r = knob.getBoundingClientRect();
+      return (Math.atan2(ev.clientY - (r.top + r.height / 2), ev.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
+    };
+    knob.addEventListener("pointerdown", (ev) => {
+      clearInterval(snapTimer);
+      knob.setPointerCapture(ev.pointerId);
+      knobDrag = { a: angleOf(ev), f: freq };
+    });
+    knob.addEventListener("pointermove", (ev) => {
+      if (!knobDrag) return;
+      let da = angleOf(ev) - knobDrag.a;
+      if (da > 180) da -= 360;
+      if (da < -180) da += 360;
+      knobDrag.a += da;
+      knobDrag.f += (da / 300) * (MAX - MIN);
+      setFreq(knobDrag.f);
+    });
+    knob.addEventListener("pointerup", () => { knobDrag = null; settle(); });
+    knob.addEventListener("keydown", (ev) => {
+      const k = ev.key;
+      if (k === "ArrowRight" || k === "ArrowUp") setFreq(freq + 0.1);
+      else if (k === "ArrowLeft" || k === "ArrowDown") setFreq(freq - 0.1);
+      else if (k === "PageUp") goStation(Math.min(EMISORAS.length - 1, (signal > 0.85 ? nearest : nearest - 1) + 1));
+      else if (k === "PageDown") goStation(Math.max(0, (signal > 0.85 ? nearest : nearest + 1) - 1));
+      else if (k === "Home") goStation(0);
+      else if (k === "End") goStation(EMISORAS.length - 1);
+      else return;
+      ev.preventDefault();
+    });
+    knob.addEventListener("keyup", (ev) => { if (ev.key.startsWith("Arrow")) settle(); });
+
+    // Dial: arrastrar la aguja directamente
+    let dialDrag = false;
+    const freqAt = (ev) => {
+      const r = dial.getBoundingClientRect();
+      const p = ((ev.clientX - r.left) / r.width) * 100;
+      return MIN + ((p - 4) / 92) * (MAX - MIN);
+    };
+    dial.addEventListener("pointerdown", (ev) => {
+      if (ev.target.closest(".mark")) return;
+      clearInterval(snapTimer);
+      dialDrag = true;
+      dial.setPointerCapture(ev.pointerId);
+      setFreq(freqAt(ev));
+    });
+    dial.addEventListener("pointermove", (ev) => dialDrag && setFreq(freqAt(ev)));
+    dial.addEventListener("pointerup", () => { dialDrag = false; settle(); });
+
+    // Rueda del ratón sobre la radio
+    let wheelTimer;
+    document.querySelector(".radio").addEventListener("wheel", (ev) => {
+      ev.preventDefault();
+      clearInterval(snapTimer);
+      setFreq(freq + (ev.deltaY > 0 ? 0.1 : -0.1) * (Math.abs(ev.deltaY) > 40 ? 3 : 1));
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(settle, 220);
+    }, { passive: false });
+
+    // Parpadeo de la estática mientras no hay señal
+    setInterval(() => { if (!reduce.matches && signal <= 0.85 && !document.hidden) render(); }, 110);
+
+    // Sonido (opcional): ruido blanco que baja con la señal
+    let audio = null;
+    function updateNoise() {
+      if (!audio) return;
+      audio.gain.gain.setTargetAtTime(audio.on ? (1 - signal) * 0.05 + 0.004 : 0, audio.ctx.currentTime, 0.05);
+    }
+    $("[data-sound]").addEventListener("click", (ev) => {
+      const btn = ev.currentTarget;
+      if (!audio) {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.loop = true;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.value = 1800;
+        const gain = ctx.createGain();
+        gain.gain.value = 0;
+        src.connect(filter).connect(gain).connect(ctx.destination);
+        src.start();
+        audio = { ctx, gain, on: false };
+      }
+      audio.on = !audio.on;
+      if (audio.on) audio.ctx.resume();
+      btn.setAttribute("aria-pressed", String(audio.on));
+      updateNoise();
+    });
+
+    window.addEventListener("resize", render);
+    // Arranque: la aguja barre el dial hasta la primera emisora
+    if (reduce.matches) render();
+    else { freq = MIN; render(); setTimeout(() => goStation(0), 300); }
+  </script>
+</body>
+</html>

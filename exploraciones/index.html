@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mate0s · 5 direcciones</title>
+  <meta name="robots" content="noindex">
+  <style>
+    :root { --bg: #f4f4f2; --ink: #151518; --soft: #5b5c62; color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 980px; margin: 0 auto; padding: 48px 16px 64px; }
+    h1 { margin: 0 0 6px; font-size: clamp(30px, 4vw, 44px); letter-spacing: -0.02em; line-height: 1.05; }
+    .intro { margin: 0 0 32px; color: var(--soft); max-width: 60ch; }
+    ol { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+    li a { display: grid; grid-template-columns: 56px 120px minmax(0, 1fr); gap: 18px; align-items: center; padding: 18px 0; border-bottom: 1px solid #d5d5d1; color: inherit; text-decoration: none; }
+    li a:hover .name { text-decoration: underline; text-underline-offset: 4px; }
+    li a:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+    .n { font-weight: 800; font-size: 28px; font-variant-numeric: tabular-nums; }
+    .pal { display: flex; height: 40px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08); }
+    .pal i { flex: 1; }
+    .name { font-weight: 750; font-size: 21px; }
+    .desc { margin: 2px 0 0; color: var(--soft); }
+    @media (max-width: 600px) { li a { grid-template-columns: 36px minmax(0, 1fr); } .pal { grid-column: 2; grid-row: 2; height: 14px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>mate0s · 5 direcciones</h1>
+    <p class="intro">Cinco landings con el mismo contenido y una identidad distinta cada una. Elige una (o mezcla lo mejor de varias) y la dejamos lista para publicar.</p>
+    <ol>
+      <li><a href="rally/"><span class="n">01</span><span class="pal"><i style="background:#1b3bff"></i><i style="background:#f5f7ff"></i></span><span><span class="name">Rally</span><p class="desc">Una pantalla, un mini-juego de pádel y dos colores. Cada punto al bug desbloquea un capítulo.</p></span></a></li>
+      <li><a href="render/"><span class="n">02</span><span class="pal"><i style="background:#ff48b0"></i><i style="background:#0b5fa5"></i><i style="background:#eff0ec"></i></span><span><span class="name">Render</span><p class="desc">Fanzine risográfico a dos tintas. Un interruptor enseña la página como plantilla Smarty.</p></span></a></li>
+      <li><a href="manual/"><span class="n">03</span><span class="pal"><i style="background:#16181c"></i><i style="background:#ffd23f"></i><i style="background:#f5f5f3"></i></span><span><span class="name">Manual de montaje</span><p class="desc">Instrucciones para montar un desarrollador: piezas, pasos y un dibujo que se monta al bajar.</p></span></a></li>
+      <li><a href="carta/"><span class="n">04</span><span class="pal"><i style="background:#777bb3"></i><i style="background:#f7df1e"></i><i style="background:#e34f26"></i><i style="background:#1572b6"></i><i style="background:#00758f"></i></span><span><span class="name">Carta de tintas</span><p class="desc">Un abanico de muestras de color que se despliega arrastrando. Cada tinta es una parte de ti.</p></span></a></li>
+      <li><a href="radio/"><span class="n">05</span><span class="pal"><i style="background:#e8572a"></i><i style="background:#eceae4"></i><i style="background:#27282b"></i></span><span><span class="name">mate0s FM</span><p class="desc">Una radio de diseño industrial: gira la rueda para sintonizar cada sección. Entre emisoras, estática.</p></span></a></li>
+    </ol>
+  </main>
+</body>
+</html>
